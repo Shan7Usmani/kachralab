@@ -85,16 +85,18 @@ lib/
 
 ## Citizen intake storage
 
-Public complaints need a shared store. Set `DATABASE_URL` to a Postgres connection string (Neon,
-Supabase or Vercel Postgres). The `citizen_reports` table is created on first write.
+Public complaints use a shared Postgres store. The Vercel project is connected to Supabase through
+the Vercel Marketplace, which sets `POSTGRES_URL` for production, preview and development. The app
+accepts `DATABASE_URL`, `POSTGRES_URL` or `POSTGRES_URL_NON_POOLING` in that order. The
+`citizen_reports` table is created on first write.
 
 ```bash
-# .env.local
+# Optional local override
 DATABASE_URL=postgres://...
 ```
 
-- Without `DATABASE_URL`, local development uses `.data/reports.json` (gitignored).
-- On Vercel, a missing `DATABASE_URL` makes the public form return a clear "storage not configured"
+- Without any connection string, local development uses `.data/reports.json` (gitignored).
+- On Vercel, a missing connection string makes the public form return a clear "storage not configured"
   response instead of pretending the report was saved.
 - `PGSSL=disable` is only needed for a local Postgres without TLS.
 

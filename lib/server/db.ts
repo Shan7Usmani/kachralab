@@ -5,7 +5,13 @@ import type { CitizenReportRow, CitizenStatus } from '@/lib/citizen';
 
 export type StorageMode = 'postgres' | 'file' | 'unavailable';
 
-export const storageMode: StorageMode = process.env.DATABASE_URL
+const connectionString =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  '';
+
+export const storageMode: StorageMode = connectionString
   ? 'postgres'
   : process.env.VERCEL
     ? 'unavailable'
@@ -17,10 +23,22 @@ const DATA_FILE = path.join(DATA_DIR, 'reports.json');
 let pool: Pool | null = null;
 let schemaReady: Promise<void> | null = null;
 
+function sanitizedConnectionString(value: string): string {
+  if (!value) return value;
+  try {
+    const url = new URL(value);
+    // Supabase appends sslmode=require, which overrides the explicit ssl option in pg.
+    url.searchParams.delete('sslmode');
+    return url.toString();
+  } catch {
+    return value;
+  }
+}
+
 function getPool(): Pool {
   if (!pool) {
     pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
+      connectionString: sanitizedConnectionString(connectionString),
       max: 3,
       ssl: process.env.PGSSL === 'disable' ? undefined : { rejectUnauthorized: false }
     });
