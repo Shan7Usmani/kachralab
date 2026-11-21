@@ -33,10 +33,14 @@ npm run typecheck
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Operations overview: KPIs, priority queue, activity, map |
+| `/report` | Public citizen form: location, category, description, reference number |
+| `/track` | Public reference lookup |
+| `/track/[reference]` | Public complaint status timeline |
+| `/` | Staff operations overview: KPIs, priority queue, activity, map |
 | `/hotspots` | Case register with status filters and case detail |
 | `/map` | Full map with the 30 m cluster radius and 150 m spillover halo |
-| `/intake` | Report form with 30 m clustering and rule-based classification |
+| `/intake` | Staff report form with 30 m clustering and rule-based classification |
+| `/inbox` | Citizen inbox: complaints submitted from the public form |
 | `/verify` | 14-day checkpoints, spillover flag and escrow release |
 | `/impact` | Programme-level demo metrics |
 | `/method` | Pipeline, risk formula, roles and known gaps |
@@ -46,14 +50,21 @@ Old paths (`/cases`, `/simulator`, `/vision`, `/lab`, `/human`) redirect to the 
 ## Architecture
 
 ```text
-app/                 Route entry points and global styles
+app/
+  (public)/          Public report and tracking pages
+  (staff)/           Staff console pages behind the shared shell
+  api/reports/       Citizen report API (GET, POST, PATCH)
 components/
   AppShell.tsx       Sidebar, top bar, navigation, reset
+  LocationPicker.tsx Leaflet click-to-place location picker
   RealMap.tsx        Leaflet map with hotspot geometry
   ui.tsx             Cards, stats, badges, buttons, meters, formatting
 lib/
+  citizen.ts         Shared citizen types, categories and status labels
   engine.ts          Pure domain logic: clustering, risk, diagnosis, verdicts, seed data
-  store.tsx          Single React store, reducer actions, versioned localStorage
+  store.tsx          Staff store, reducer actions, versioned localStorage
+  server/db.ts       Postgres or local-file storage for citizen reports
+  server/reports.ts  Server-side clustering, case grouping and status updates
 ```
 
 - All business rules live in `lib/engine.ts`; pages import it directly. There is no duplicate API
@@ -72,9 +83,30 @@ lib/
   escrow withheld. Release is blocked before day 14.
 - **Escrow:** 40% paid on clearance, 60% held until verification.
 
+## Citizen intake storage
+
+Public complaints need a shared store. Set `DATABASE_URL` to a Postgres connection string (Neon,
+Supabase or Vercel Postgres). The `citizen_reports` table is created on first write.
+
+```bash
+# .env.local
+DATABASE_URL=postgres://...
+```
+
+- Without `DATABASE_URL`, local development uses `.data/reports.json` (gitignored).
+- On Vercel, a missing `DATABASE_URL` makes the public form return a clear "storage not configured"
+  response instead of pretending the report was saved.
+- `PGSSL=disable` is only needed for a local Postgres without TLS.
+
+Public submissions are clustered server-side against the five seed hotspots and existing citizen
+cases. A report within 30 m merges into the case; anything further opens a `CZ-` case.
+
 ## Known gaps
 
-- Demo state is local to one browser; there is no database, auth or multi-user sync.
+- Staff case actions (verification, escrow) still use the browser-local demo store. Citizen
+  complaints are shared through Postgres but are not yet written into that local case register.
+- There is no auth or staff account model. The staff console and inbox API are unauthenticated demo
+  surfaces; add staff auth before any real deployment.
 - Classification is a fixed rule-based sample, not a trained model.
 - Map tiles require a network connection.
 - No payment provider is connected; escrow is simulated.

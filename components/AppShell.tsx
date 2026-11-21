@@ -19,6 +19,7 @@ const NAV = [
     group: 'Operations',
     items: [
       { href: '/intake', label: 'Intake', icon: 'camera' },
+      { href: '/inbox', label: 'Citizen inbox', icon: 'inbox' },
       { href: '/verify', label: 'Verification', icon: 'check' }
     ]
   },
@@ -36,6 +37,7 @@ const TITLES: Record<string, string> = {
   '/hotspots': 'Hotspots',
   '/map': 'Map',
   '/intake': 'Intake',
+  '/inbox': 'Citizen inbox',
   '/verify': 'Verification',
   '/impact': 'Impact',
   '/method': 'Method'

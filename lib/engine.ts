@@ -121,7 +121,7 @@ export function haversineMeters(
 
 export function clusterReport(
   point: { lat: number; lng: number },
-  hotspots: Hotspot[],
+  hotspots: Array<Pick<Hotspot, 'id' | 'lat' | 'lng'>>,
   thresholdMeters = 30
 ): ClusterResult {
   let matchedId: string | null = null;

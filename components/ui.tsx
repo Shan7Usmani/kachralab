@@ -112,6 +112,7 @@ const ICONS: Record<string, string> = {
   pin: 'M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11z M12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
   map: 'M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14',
   camera: 'M4 8h3l2-3h6l2 3h3v11H4z M12 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z',
+  inbox: 'M4 4h16v16H4zM4 13h4l2 3h4l2-3h4',
   check: 'M4 12l5 5L20 6',
   chart: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
   book: 'M4 5a2 2 0 0 1 2-2h14v18H6a2 2 0 0 1-2-2z M8 7h8M8 11h8',
