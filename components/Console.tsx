@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   AppState,
   AuditEntry,
@@ -23,6 +24,8 @@ import {
 } from '@/lib/engine';
 
 const STORE_KEY = 'kachralab.next.v1';
+
+type View = 'console' | 'cases' | 'map' | 'simulator' | 'vision';
 
 async function engineCall<T>(
   payload: Record<string, unknown>,
@@ -84,7 +87,7 @@ const FILTERS: Array<'ALL' | HotspotStatus> = [
   'RECURRING'
 ];
 
-export default function Console() {
+export default function Console({ view = 'console' }: { view?: View }) {
   const [state, setState] = useState<AppState>(() => createSeedState());
   const [hydrated, setHydrated] = useState(false);
   const [apiOnline, setApiOnline] = useState(false);
@@ -328,7 +331,7 @@ export default function Console() {
       : `${formatINR(selected.contract.heldAmount)} HELD`;
 
   return (
-    <div className="app">
+    <div className={`app view-${view}`}>
       <header className="topbar glass">
         <div className="brand">
           <span className="brand-mark">KL</span>
@@ -339,9 +342,14 @@ export default function Console() {
         </div>
 
         <nav className="topnav" aria-label="Main actions">
-          <button className="navbtn active">LIVE CONSOLE</button>
-          <button className="navbtn" onClick={() => setBriefingOpen(true)}>WHY THIS EXISTS</button>
-          <button className="navbtn" onClick={resetAll}>RESET SESSION</button>
+          <Link href="/" className={`navbtn ${view === 'console' ? 'active' : ''}`}>CONSOLE</Link>
+          <Link href="/cases" className={`navbtn ${view === 'cases' ? 'active' : ''}`}>CASES</Link>
+          <Link href="/map" className={`navbtn ${view === 'map' ? 'active' : ''}`}>MAP</Link>
+          <Link href="/simulator" className={`navbtn ${view === 'simulator' ? 'active' : ''}`}>SIMULATOR</Link>
+          <Link href="/vision" className={`navbtn ${view === 'vision' ? 'active' : ''}`}>VISION</Link>
+          <Link href="/impact" className="navbtn">IMPACT</Link>
+          <button className="navbtn" onClick={() => setBriefingOpen(true)}>WHY</button>
+          <button className="navbtn" onClick={resetAll}>RESET</button>
         </nav>
 
         <div className="top-actions">

@@ -420,3 +420,44 @@ body { font-size: 16px; }
 .risk-number { font-size: 58px; }
 .stat-value { font-size: 32px; }
 .map-label { font-size: 10px; }
+
+/* Multi-page navigation and focused views */
+.navbtn { text-decoration: none; display: inline-block; white-space: nowrap; }
+.view-cases .lower,
+.view-map .lower { display: none; }
+.view-simulator .workspace,
+.view-vision .workspace { display: none; }
+.view-vision .stats { display: none; }
+.view-simulator .stats { grid-template-columns: repeat(2, 1fr); }
+.view-cases .map-panel { display: none; }
+.view-cases .workspace { grid-template-columns: 300px minmax(360px, 1fr); }
+.view-map .case-list { max-height: 620px; }
+.view-map .map-panel { min-height: 640px; }
+
+.impact-hero { border-radius: 18px; padding: 34px; margin-bottom: 16px; }
+.impact-hero h1 { font-size: clamp(26px, 3.4vw, 44px); line-height: 1.15; margin: 14px 0 12px; max-width: 22ch; }
+.impact-hero p { color: var(--dim); max-width: 78ch; font-size: 14px; }
+.impact-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+.impact-stat { border-radius: 16px; padding: 22px; }
+.impact-stat strong { display: block; font: 800 38px ui-monospace, Consolas, monospace; }
+.impact-stat span { display: block; color: var(--dim); font: 10px ui-monospace, Consolas, monospace; letter-spacing: .1em; margin-top: 10px; }
+.impact-stat.amber strong { color: var(--amber); }
+.impact-stat.teal strong { color: var(--teal); }
+.impact-stat.blue strong { color: var(--blue); }
+.impact-stat.red strong { color: var(--red); }
+.impact-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.impact-cards article { border-radius: 12px; padding: 16px; background: rgba(255,255,255,.03); border: 1px solid var(--stroke-soft); }
+.impact-cards article > span { color: var(--amber); font: 9px ui-monospace, Consolas, monospace; letter-spacing: .12em; }
+.impact-cards h3 { margin: 9px 0 6px; font-size: 15px; }
+.impact-cards p { margin: 0; color: var(--dim); font-size: 12px; }
+.impact-formula { font: 700 18px ui-monospace, Consolas, monospace; color: var(--text); margin: 14px 0; }
+.impact-formula sub { color: var(--amber); }
+
+@media (max-width: 1000px) {
+  .impact-grid { grid-template-columns: repeat(2, 1fr); }
+  .impact-cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .impact-grid { grid-template-columns: 1fr; }
+  .view-cases .workspace { grid-template-columns: 1fr; }
+}
