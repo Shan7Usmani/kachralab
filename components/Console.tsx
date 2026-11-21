@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import RealMap from '@/components/RealMap';
 import {
   AppState,
   AuditEntry,
@@ -478,55 +479,15 @@ export default function Console({ view = 'console' }: { view?: View }) {
 
         <section className="panel glass map-panel">
           <div className="panel-head">
-            <h2>SCHEMATIC DELHI / HOTSPOT MAP</h2>
-            <small>DATA-DRIVEN MARKERS · NOT GIS</small>
+            <h2>REAL DELHI / HOTSPOT MAP</h2>
+            <small>OPENSTREETMAP · TRUE 30 M / 150 M RADII</small>
           </div>
           <div className="map-wrap">
-            <svg className="schematic" viewBox="0 0 800 560" role="img" aria-label="Delhi hotspot schematic">
-              <g className="map-grid">
-                <path d="M0 100H800M0 220H800M0 340H800M0 460H800M120 0V560M280 0V560M440 0V560M600 0V560M740 0V560" />
-              </g>
-              <path className="river" d="M690 -20 C620 90 670 170 590 260 C540 320 570 420 510 580" />
-              <path className="road" d="M90 500 C170 320 360 150 650 80" />
-              <text className="map-label" x="646" y="120">YAMUNA CORRIDOR</text>
-              <text className="map-label" x="170" y="470">RING ROAD</text>
-              <text className="map-label" x="250" y="60">CENTRAL DELHI</text>
-              <text className="map-label" x="520" y="520">SOUTH DELHI / OKHLA</text>
-
-              {selected.monitor.spillover && (
-                <g className="dispatch">
-                  <path d={`M90 500 L${selected.mapX} ${selected.mapY} L${selected.mapX + 70} ${selected.mapY + 42}`} />
-                  <circle cx="90" cy="500" r="5" />
-                  <text x="98" y="492">DEPOT</text>
-                  <text x={selected.mapX + 76} y={selected.mapY + 54}>SPILLOVER</text>
-                </g>
-              )}
-
-              <g transform={`translate(${selected.mapX},${selected.mapY})`}>
-                <circle
-                  className="halo150"
-                  r="48"
-                  style={{ stroke: selected.monitor.spillover ? 'var(--red)' : 'var(--blue)' }}
-                />
-                <circle className="ring30" r="16" />
-                <line className="radar-sweep" x1="0" y1="0" x2="48" y2="0" />
-              </g>
-
-              {state.hotspots.map((h) => {
-                const tone = statusTone(h.status);
-                return (
-                  <g
-                    key={h.id}
-                    className={`marker ${h.id === selected.id ? 'active' : ''} ${tone}`}
-                    transform={`translate(${h.mapX},${h.mapY})`}
-                    onClick={() => selectHotspot(h.id)}
-                  >
-                    <circle r={h.id === selected.id ? 10 : 8} />
-                    <text x="15" y="4">{h.id}</text>
-                  </g>
-                );
-              })}
-            </svg>
+            <RealMap
+              hotspots={state.hotspots}
+              selectedId={selected.id}
+              onSelect={selectHotspot}
+            />
           </div>
           <div className="map-legend">
             <span><i className="dot amber" />30 m cluster</span>
