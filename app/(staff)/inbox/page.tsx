@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Badge, Bar, Card, Empty, PageHeader } from '@/components/ui';
 import {
   CASE_ACTION_LABEL,
@@ -87,6 +88,7 @@ function actionClass(action: CaseAction): string {
 }
 
 export default function InboxPage() {
+  const router = useRouter();
   const [payload, setPayload] = useState<CasesPayload | null>(null);
   const [detail, setDetail] = useState<DetailPayload | null>(null);
   const [selectedId, setSelectedId] = useState('');
@@ -168,6 +170,7 @@ export default function InboxPage() {
       setNote('');
       await load();
       await loadDetail(detail.case.id);
+      router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'The action could not be applied.');
     } finally {
