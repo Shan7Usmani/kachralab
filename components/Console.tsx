@@ -300,13 +300,6 @@ export default function Console({ view = 'console' }: { view?: View }) {
     };
     const speak = (text: string) => {
       announceLocal(text);
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.98;
-        utterance.pitch = 0.96;
-        window.speechSynthesis.speak(utterance);
-      }
     };
     const spot = (selector: string) => {
       document.querySelectorAll('.spot').forEach((el) => el.classList.remove('spot'));
@@ -344,7 +337,6 @@ export default function Console({ view = 'console' }: { view?: View }) {
     } finally {
       setDemoRunning(false);
       document.querySelectorAll('.spot').forEach((el) => el.classList.remove('spot'));
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
   }
 
