@@ -1,0 +1,10 @@
+{
+  "name": "kachralab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "KachraLab - offline-first municipal waste intervention intelligence demo with Vercel-compatible API functions",
+  "scripts": {
+    "dev": "vercel dev",
+    "check": "node --check app.js && node --check api/_engine.js && node --check api/risk.js && node --check api/cluster.js && node --check api/verdict.js && node --check api/vision.js"
+  }
+}
