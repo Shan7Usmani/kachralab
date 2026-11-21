@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 import { useStore } from '@/lib/store';
 import { Icon } from '@/components/ui';
@@ -45,6 +45,7 @@ const TITLES: Record<string, string> = {
 
 export default function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { state, dispatch } = useStore();
 
   useEffect(() => {
@@ -56,6 +57,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
     if (window.confirm('Reset all demo data to the seed dataset? This clears local reports and verdicts.')) {
       dispatch({ type: 'reset' });
     }
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+    router.refresh();
   };
 
   return (
@@ -92,9 +99,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="sidebar-foot">
-          Demo environment
-          <br />
-          Illustrative data, stored in this browser only.
+          Shared case register · Postgres or local file storage
         </div>
       </aside>
 
@@ -120,6 +125,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <button type="button" className="btn btn-sm" onClick={reset}>
               <Icon name="reset" />
               Reset
+            </button>
+            <button type="button" className="btn btn-sm" onClick={handleLogout}>
+              <Icon name="log-out" />
+              Sign out
             </button>
             <Link className="btn btn-primary btn-sm" href="/intake">
               <Icon name="plus" />

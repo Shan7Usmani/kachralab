@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { Pool } from 'pg';
 import type { CitizenReportRow, CitizenStatus } from '@/lib/citizen';
+import { CASE_SCHEMA } from './schema';
 
 export type StorageMode = 'postgres' | 'file' | 'unavailable';
 
@@ -68,9 +69,17 @@ async function ensureSchema(): Promise<void> {
       await getPool().query(
         'CREATE INDEX IF NOT EXISTS citizen_reports_case_idx ON citizen_reports (case_id)'
       );
+      await getPool().query(CASE_SCHEMA);
     })();
   }
   return schemaReady;
+}
+
+export async function query<T extends object>(text: string, params: unknown[] = []): Promise<T[]> {
+  if (storageMode !== 'postgres') throw new Error('storage_unavailable');
+  await ensureSchema();
+  const result = await getPool().query(text, params);
+  return result.rows as T[];
 }
 
 interface DbRow {
@@ -172,6 +181,23 @@ export async function insertRow(row: CitizenReportRow): Promise<void> {
       row.action
     ]
   );
+}
+
+export async function readJsonCollection<T>(name: string): Promise<T[]> {
+  try {
+    const raw = await fs.readFile(path.join(DATA_DIR, name), 'utf8');
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as T[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function writeJsonCollection<T>(name: string, rows: T[]): Promise<void> {
+  await withFileLock(async () => {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.writeFile(path.join(DATA_DIR, name), JSON.stringify(rows, null, 2), 'utf8');
+  });
 }
 
 export async function updateCaseStatus(caseId: string, status: CitizenStatus): Promise<void> {

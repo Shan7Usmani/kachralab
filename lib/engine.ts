@@ -2,11 +2,19 @@ export type FactorKey = 'recurrence' | 'hazard' | 'proximity' | 'duration';
 export type Factors = Record<FactorKey, number>;
 export type CheckpointState = 'clean' | 'failed' | 'pending';
 export type HotspotStatus =
+  | 'RECEIVED'
+  | 'TRIAGED'
+  | 'ASSIGNED'
+  | 'IN_PROGRESS'
+  | 'CLEARED'
+  | 'VERIFIED'
+  | 'CLOSED'
+  | 'RECURRING'
+  | 'ESCALATED'
   | 'UNDER_MONITORING'
   | 'CRITICAL_P1'
   | 'VERIFIED_CLEAN'
   | 'IN_INTERVENTION'
-  | 'RECURRING'
   | 'NEW';
 export type EscrowState = 'HELD' | 'RELEASED' | 'WITHHELD';
 
@@ -36,6 +44,12 @@ export interface Hotspot {
   status: HotspotStatus;
   monitor: Monitor;
   contract: Contract;
+  source?: 'seed' | 'citizen';
+  priority?: 'P1' | 'P2' | 'P3';
+  team?: string | null;
+  dueAt?: string | null;
+  reference?: string | null;
+  updatedAt?: string;
 }
 
 export interface RiskResult {
@@ -287,20 +301,29 @@ export function diagnose(hotspot: Hotspot): { title: string; evidence: string }[
 
 export function statusLabel(status: HotspotStatus): string {
   const map: Record<HotspotStatus, string> = {
+    RECEIVED: 'Received',
+    TRIAGED: 'Triaged',
+    ASSIGNED: 'Assigned',
+    IN_PROGRESS: 'In progress',
+    CLEARED: 'Cleared',
+    VERIFIED: 'Verified',
+    CLOSED: 'Closed',
+    RECURRING: 'Recurring',
+    ESCALATED: 'Escalated',
     UNDER_MONITORING: 'Under monitoring',
     CRITICAL_P1: 'Critical P1',
     VERIFIED_CLEAN: 'Verified clean',
     IN_INTERVENTION: 'In intervention',
-    RECURRING: 'Recurring',
     NEW: 'New hotspot'
   };
   return map[status] || status;
 }
 
 export function statusTone(status: HotspotStatus): string {
-  if (status === 'CRITICAL_P1' || status === 'RECURRING') return 'danger';
-  if (status === 'VERIFIED_CLEAN') return 'ok';
-  if (status === 'NEW') return 'info';
+  if (status === 'CRITICAL_P1' || status === 'RECURRING' || status === 'ESCALATED') return 'danger';
+  if (status === 'VERIFIED_CLEAN' || status === 'VERIFIED') return 'ok';
+  if (status === 'CLOSED') return 'neutral';
+  if (status === 'RECEIVED' || status === 'TRIAGED' || status === 'NEW') return 'info';
   return 'warn';
 }
 

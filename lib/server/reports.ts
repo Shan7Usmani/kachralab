@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { clusterReport, createSeedState } from '@/lib/engine';
 import type { CitizenCase, CitizenReportRow, CitizenStatus } from '@/lib/citizen';
 import { insertRow, listRows, updateCaseStatus } from './db';
+import { syncCaseFromReport } from './cases';
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
@@ -65,6 +66,14 @@ export async function createReport(input: NewReportInput): Promise<CitizenReport
   };
 
   await insertRow(row);
+
+  try {
+    await syncCaseFromReport(row);
+  } catch (error) {
+    // The complaint is already saved; a case-register failure must not lose it.
+    console.error('case register sync failed', error);
+  }
+
   return row;
 }
 

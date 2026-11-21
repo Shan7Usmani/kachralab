@@ -13,7 +13,8 @@ All coordinates, report counts, classification output and contract amounts are i
 - Next.js 16 (App Router) and React 19
 - TypeScript
 - Leaflet + OpenStreetMap tiles
-- Browser `localStorage` for demo persistence
+- Postgres (Supabase) for citizen intake and the shared case register
+- Browser `localStorage` for the browser-only demo views
 
 ## Run locally
 
@@ -40,7 +41,7 @@ npm run typecheck
 | `/hotspots` | Case register with status filters and case detail |
 | `/map` | Full map with the 30 m cluster radius and 150 m spillover halo |
 | `/intake` | Staff report form with 30 m clustering and rule-based classification |
-| `/inbox` | Citizen inbox: complaints submitted from the public form |
+| `/inbox` | Shared case register: triage, assign, clear, verify and escalate citizen cases |
 | `/verify` | 14-day checkpoints, spillover flag and escrow release |
 | `/impact` | Programme-level demo metrics |
 | `/method` | Pipeline, risk formula, roles and known gaps |
@@ -54,6 +55,7 @@ app/
   (public)/          Public report and tracking pages
   (staff)/           Staff console pages behind the shared shell
   api/reports/       Citizen report API (GET, POST, PATCH)
+  api/cases/         Case register API (GET list/detail, POST lifecycle actions)
 components/
   AppShell.tsx       Sidebar, top bar, navigation, reset
   LocationPicker.tsx Leaflet click-to-place location picker
@@ -61,9 +63,12 @@ components/
   ui.tsx             Cards, stats, badges, buttons, meters, formatting
 lib/
   citizen.ts         Shared citizen types, categories and status labels
+  case.ts            Case statuses, priorities, SLAs and action labels
   engine.ts          Pure domain logic: clustering, risk, diagnosis, verdicts, seed data
   store.tsx          Staff store, reducer actions, versioned localStorage
-  server/db.ts       Postgres or local-file storage for citizen reports
+  server/db.ts       Postgres or local-file storage for citizen reports and cases
+  server/schema.ts   Postgres schema for cases and case_events
+  server/cases.ts    Case lifecycle, event log and citizen-report sync
   server/reports.ts  Server-side clustering, case grouping and status updates
 ```
 
@@ -103,10 +108,22 @@ DATABASE_URL=postgres://...
 Public submissions are clustered server-side against the five seed hotspots and existing citizen
 cases. A report within 30 m merges into the case; anything further opens a `CZ-` case.
 
+## Case register
+
+`/inbox` reads the shared `cases` table. The five seed hotspots are inserted once on first access.
+Every citizen report merges into a case or opens a new one, and the case status is mirrored back to
+`citizen_reports` so the public tracking page stays in step.
+
+Lifecycle: `RECEIVED → TRIAGED → ASSIGNED → IN_PROGRESS → CLEARED → VERIFIED → CLOSED`, with
+`RECURRING` and `ESCALATED` as side states. Each action is appended to `case_events` with the actor,
+status change and note. SLA targets are 24h (P1), 72h (P2) and 7 days (P3). A new report at a
+cleared, verified or closed case reopens it as `RECURRING` and withholds escrow. Release requires 14
+clean checkpoints and no spillover flag.
+
 ## Known gaps
 
-- Staff case actions (verification, escrow) still use the browser-local demo store. Citizen
-  complaints are shared through Postgres but are not yet written into that local case register.
+- `/inbox` uses the shared Postgres case register. `/hotspots` and `/verify` still read the
+  browser-local seed store, so those two demo views do not yet read the server register.
 - There is no auth or staff account model. The staff console and inbox API are unauthenticated demo
   surfaces; add staff auth before any real deployment.
 - Classification is a fixed rule-based sample, not a trained model.
