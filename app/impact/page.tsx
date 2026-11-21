@@ -20,6 +20,7 @@ export default function ImpactPage() {
           <Link href="/simulator" className="navbtn">SIMULATOR</Link>
           <Link href="/vision" className="navbtn">VISION</Link>
           <Link href="/lab" className="navbtn">LAB</Link>
+          <Link href="/human" className="navbtn">HUMAN</Link>
           <Link href="/impact" className="navbtn active">IMPACT</Link>
         </nav>
       </header>

@@ -381,6 +381,7 @@ export default function Console({ view = 'console' }: { view?: View }) {
           <Link href="/simulator" className={`navbtn ${view === 'simulator' ? 'active' : ''}`}>SIMULATOR</Link>
           <Link href="/vision" className={`navbtn ${view === 'vision' ? 'active' : ''}`}>VISION</Link>
           <Link href="/lab" className="navbtn">LAB</Link>
+          <Link href="/human" className="navbtn">HUMAN</Link>
           <Link href="/impact" className="navbtn">IMPACT</Link>
           <button className="navbtn" onClick={() => setBriefingOpen(true)}>WHY</button>
           <button className="navbtn" onClick={resetAll}>RESET</button>
