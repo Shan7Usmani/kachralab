@@ -291,25 +291,57 @@ export default function Console({ view = 'console' }: { view?: View }) {
 
   async function guidedDemo() {
     setDemoRunning(true);
+    const announceLocal = (text: string) => {
+      const region = document.getElementById('live-region');
+      if (region) region.textContent = text;
+    };
+    const speak = (text: string) => {
+      announceLocal(text);
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.98;
+        utterance.pitch = 0.96;
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+    const spot = (selector: string) => {
+      document.querySelectorAll('.spot').forEach((el) => el.classList.remove('spot'));
+      const el = document.querySelector(selector);
+      if (el) {
+        el.classList.add('spot');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
     try {
       setState(createSeedState());
       setLat('');
       setLng('');
       await delay(140);
       selectHotspot('GZ-042');
+      spot('.case-detail-panel');
+      speak('Case G Z 0 4 2 opened. Risk 82. Four days into a fourteen day watch.');
       await delay(620);
       setLat(String(PRESET.lat));
       setLng(String(PRESET.lng));
+      spot('.map-panel');
+      speak('A citizen report lands fourteen point two metres from the hotspot. It merges instead of opening a new ticket.');
       await delay(460);
       await performReport(PRESET.lat, PRESET.lng);
       await delay(820);
       if (!stateRef.current.rain) toggleRain();
+      speak('Monsoon multiplier active. Leachate risk rises and every score recalculates.');
       await delay(760);
+      spot('.lower');
       await runVerdict('recurrence');
+      speak('Day five dumping. Spillover detected in the one hundred and fifty metre halo. Sixty percent of the payment is forfeited.');
       await delay(1000);
       await runVerdict('success');
+      speak('Alternate branch. Fourteen clean days verified. Escrow released. That is the outcome we pay for.');
     } finally {
       setDemoRunning(false);
+      document.querySelectorAll('.spot').forEach((el) => el.classList.remove('spot'));
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
   }
 
@@ -347,6 +379,7 @@ export default function Console({ view = 'console' }: { view?: View }) {
           <Link href="/map" className={`navbtn ${view === 'map' ? 'active' : ''}`}>MAP</Link>
           <Link href="/simulator" className={`navbtn ${view === 'simulator' ? 'active' : ''}`}>SIMULATOR</Link>
           <Link href="/vision" className={`navbtn ${view === 'vision' ? 'active' : ''}`}>VISION</Link>
+          <Link href="/lab" className="navbtn">LAB</Link>
           <Link href="/impact" className="navbtn">IMPACT</Link>
           <button className="navbtn" onClick={() => setBriefingOpen(true)}>WHY</button>
           <button className="navbtn" onClick={resetAll}>RESET</button>
