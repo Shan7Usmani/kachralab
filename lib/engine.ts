@@ -119,17 +119,55 @@ export function haversineMeters(
   return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h));
 }
 
+export function clusterReport(
+  point: { lat: number; lng: number },
+  hotspots: Hotspot[],
+  thresholdMeters = 30
+): ClusterResult {
+  let matchedId: string | null = null;
+  let distance = Infinity;
+
+  for (const h of hotspots) {
+    const d = haversineMeters(point, { lat: h.lat, lng: h.lng });
+    if (d < distance) {
+      distance = d;
+      matchedId = h.id;
+    }
+  }
+
+  if (!Number.isFinite(distance)) distance = 0;
+  const match = distance <= thresholdMeters;
+  return {
+    distanceMeters: Number(distance.toFixed(1)),
+    matchedId: match ? matchedId : null,
+    action: match ? 'MERGE' : 'NEW_NODE',
+    thresholdMeters
+  };
+}
+
 export function makeCheckpoints(done: number): CheckpointState[] {
   return Array.from({ length: 14 }, (_, i) => (i < done ? 'clean' : 'pending'));
 }
 
+const clamp = (value: number, min: number, max: number): number => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  return Math.min(max, Math.max(min, n));
+};
+
 export function computeRisk(factors: Factors, rainMultiplier = 1): RiskResult {
-  const m = Number.isFinite(rainMultiplier) ? rainMultiplier : 1;
+  const m = clamp(rainMultiplier, 1, 2);
+  const f: Factors = {
+    recurrence: clamp(factors.recurrence, 0, 100),
+    hazard: clamp(factors.hazard, 0, 100),
+    proximity: clamp(factors.proximity, 0, 100),
+    duration: clamp(factors.duration, 0, 100)
+  };
   const parts: Factors = {
-    recurrence: (Number(factors.recurrence) || 0) * 0.35,
-    hazard: (Number(factors.hazard) || 0) * 0.25,
-    proximity: (Number(factors.proximity) || 0) * 0.25,
-    duration: (Number(factors.duration) || 0) * 0.15
+    recurrence: f.recurrence * 0.35,
+    hazard: f.hazard * 0.25,
+    proximity: f.proximity * 0.25,
+    duration: f.duration * 0.15
   };
   const raw =
     (parts.recurrence + parts.hazard + parts.proximity + parts.duration) * m;
@@ -142,6 +180,13 @@ export function computeRisk(factors: Factors, rainMultiplier = 1): RiskResult {
   };
 }
 
+export function riskBand(score: number): { label: string; tone: string } {
+  if (score >= 80) return { label: 'Critical', tone: 'danger' };
+  if (score >= 60) return { label: 'High', tone: 'warn' };
+  if (score >= 35) return { label: 'Moderate', tone: 'info' };
+  return { label: 'Low', tone: 'ok' };
+}
+
 export function simulateVision(): VisionResult {
   return {
     source: 'RULE-BASED SIMULATION',
@@ -151,8 +196,8 @@ export function simulateVision(): VisionResult {
       { label: 'Organic sludge', value: 12 }
     ],
     massKg: 310,
-    severity: 'HIGH',
-    dispatch: 'PRIORITY 1 - DISPATCH SQUAD'
+    severity: 'High',
+    dispatch: 'Priority 1 dispatch'
   };
 }
 
@@ -160,19 +205,22 @@ export function normalizeVerdict(
   mode: 'recurrence' | 'success' | 'reset',
   hotspot: Hotspot
 ): Verdict {
-  const day = hotspot.monitor?.currentDay || 4;
+  const day = clamp(hotspot.monitor?.currentDay ?? 0, 0, 14);
   const checkpoints = makeCheckpoints(day);
+  const heldAmount =
+    hotspot.contract?.heldAmount ?? Math.round((hotspot.contract?.total ?? 12000) * 0.6);
 
   if (mode === 'recurrence') {
-    checkpoints[4] = 'failed';
+    const failedDay = Math.min(13, day);
+    checkpoints[failedDay] = 'failed';
     return {
       mode: 'RECURRENCE',
       checkpoints,
       spillover: true,
       status: 'RECURRING',
       escrow: 'WITHHELD',
-      heldAmount: 7200,
-      message: 'Day 5 dumping detected. Secondary pile flagged inside the 150 m halo.'
+      heldAmount,
+      message: `Recurrence detected on day ${failedDay + 1}. A secondary pile sits inside the 150 m halo, so the escrow stays withheld.`
     };
   }
 
@@ -185,7 +233,7 @@ export function normalizeVerdict(
       status: 'VERIFIED_CLEAN',
       escrow: 'RELEASED',
       heldAmount: 0,
-      message: '14 consecutive clean days verified. Escrow released to contractor.'
+      message: '14 consecutive clean days verified with no spillover. Escrow released to the contractor.'
     };
   }
 
@@ -193,10 +241,10 @@ export function normalizeVerdict(
     mode: 'RESET',
     checkpoints,
     spillover: false,
-    status: hotspot.status || 'UNDER_MONITORING',
-    escrow: 'HELD',
-    heldAmount: 7200,
-    message: 'Monitoring window restored to seed state.'
+    status: hotspot.status,
+    escrow: hotspot.contract.escrow,
+    heldAmount: hotspot.contract.heldAmount,
+    message: 'Spillover flag and failed checkpoints cleared. The escrow position is unchanged.'
   };
 }
 
@@ -239,12 +287,12 @@ export function diagnose(hotspot: Hotspot): { title: string; evidence: string }[
 
 export function statusLabel(status: HotspotStatus): string {
   const map: Record<HotspotStatus, string> = {
-    UNDER_MONITORING: 'RECURRING / 14-DAY WATCH',
-    CRITICAL_P1: 'CRITICAL P1',
-    VERIFIED_CLEAN: 'VERIFIED CLEAN',
-    IN_INTERVENTION: 'IN INTERVENTION',
-    RECURRING: 'RECURRING',
-    NEW: 'NEW HOTSPOT'
+    UNDER_MONITORING: 'Under monitoring',
+    CRITICAL_P1: 'Critical P1',
+    VERIFIED_CLEAN: 'Verified clean',
+    IN_INTERVENTION: 'In intervention',
+    RECURRING: 'Recurring',
+    NEW: 'New hotspot'
   };
   return map[status] || status;
 }
@@ -305,7 +353,7 @@ export function createSeedState(): AppState {
     cluster: null,
     lastVerdict: null,
     audit: [
-      { id: 1, at: Date.now(), action: 'SYSTEM', detail: 'Seed ledger loaded. 5 hotspot cases active.' }
+      { id: 1, at: 0, action: 'SYSTEM', detail: 'Seed dataset loaded: 5 active cases.' }
     ]
   };
 }
@@ -314,7 +362,7 @@ export function createHotspotFromReport(
   id: string,
   lat: number,
   lng: number,
-  vision: VisionResult
+  wasteType: string
 ): Hotspot {
   return {
     id,
@@ -324,7 +372,7 @@ export function createHotspotFromReport(
     lng,
     mapX: 120 + ((lng - 77.15) / 0.16) * 560,
     mapY: 480 - ((lat - 28.5) / 0.16) * 420,
-    wasteType: vision.fractions[0]?.label || 'Mixed waste',
+    wasteType: wasteType || 'Mixed waste',
     reports30d: 1,
     factors: { recurrence: 30, hazard: 70, proximity: 40, duration: 10 },
     status: 'NEW',

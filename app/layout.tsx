@@ -1,21 +1,23 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
+import { StoreProvider } from '@/lib/store';
+import AppShell from '@/components/AppShell';
 
 export const metadata: Metadata = {
-  title: 'KachraLab | Live Intervention Console',
+  title: 'KachraLab | Municipal waste operations',
   description:
-    'Outcome-linked municipal waste intervention intelligence. Hotspot memory, explainable risk, 14-day verification and split escrow.'
+    'Demonstration console for municipal waste hotspot intelligence: 30 m report clustering, weighted risk, a 14-day verification window and outcome-linked escrow.'
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        {children}
-        <div className="global-footnote">
-          Illustrative data · rule-based vision · simulated escrow · production stack on roadmap
-        </div>
+        <StoreProvider>
+          <AppShell>{children}</AppShell>
+        </StoreProvider>
       </body>
     </html>
   );

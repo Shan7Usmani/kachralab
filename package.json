@@ -1,23 +1,27 @@
 {
-  "name": "kachralab-next",
-  "version": "2.0.0",
+  "name": "kachralab",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "leaflet": "latest",
-    "next": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "leaflet": "^1.9.4",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@types/leaflet": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "typescript": "latest"
+    "@types/leaflet": "^1.9.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.9"
   }
 }
