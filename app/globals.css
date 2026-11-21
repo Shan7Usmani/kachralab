@@ -376,3 +376,47 @@ button { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* Readability pass - slightly larger type across the console */
+body { font-size: 16px; }
+
+.stat-label,
+.panel-head small,
+.case-meta,
+.vision-meta,
+.audit-time,
+.engine-pill,
+.brand-copy span,
+.risk-raw,
+.ledger-amounts,
+.audit-time { font-size: 10px; }
+
+.panel-head h2,
+.brand-copy strong,
+.navbtn,
+.btn,
+.toggle,
+.filter-chip,
+.badge,
+.spill,
+.cluster-out,
+.verdict-out,
+.audit-item span,
+.search,
+.field input { font-size: 11px; }
+
+.case-name,
+.detail-row,
+.stat-sub,
+.briefing-grid p,
+.audit-item span { font-size: 12px; }
+
+.cause strong,
+.vision-row,
+.factor-row,
+.cause span { font-size: 10px; }
+
+.tick { font-size: 9px; }
+.risk-number { font-size: 58px; }
+.stat-value { font-size: 32px; }
+.map-label { font-size: 10px; }
