@@ -493,6 +493,15 @@ export default function Console({ view = 'console' }: { view?: View }) {
               <text className="map-label" x="250" y="60">CENTRAL DELHI</text>
               <text className="map-label" x="520" y="520">SOUTH DELHI / OKHLA</text>
 
+              {selected.monitor.spillover && (
+                <g className="dispatch">
+                  <path d={`M90 500 L${selected.mapX} ${selected.mapY} L${selected.mapX + 70} ${selected.mapY + 42}`} />
+                  <circle cx="90" cy="500" r="5" />
+                  <text x="98" y="492">DEPOT</text>
+                  <text x={selected.mapX + 76} y={selected.mapY + 54}>SPILLOVER</text>
+                </g>
+              )}
+
               <g transform={`translate(${selected.mapX},${selected.mapY})`}>
                 <circle
                   className="halo150"
