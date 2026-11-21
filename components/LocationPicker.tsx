@@ -63,6 +63,7 @@ export default function LocationPicker({ lat, lng, onPick }: LocationPickerProps
 
   useEffect(() => {
     if (markerRef.current) markerRef.current.setLatLng([lat, lng]);
+    if (mapRef.current) mapRef.current.setView([lat, lng], 15, { animate: true });
   }, [lat, lng]);
 
   return (
