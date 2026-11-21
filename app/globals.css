@@ -608,3 +608,48 @@ body { padding-bottom: 34px; }
 @media (max-width: 640px) {
   .global-footnote { font-size: 8px; }
 }
+
+@media (max-width: 960px) {
+  html, body { overflow-x: hidden; }
+  .view-console .workspace,
+  .view-console.register-open .workspace { grid-template-columns: 1fr; }
+  .view-console .case-detail-panel { grid-column: auto; }
+  .view-console .workspace > .panel:first-child { display: block; }
+  .map-wrap, .real-map { min-height: 360px; }
+}
+
+@media (max-width: 560px) {
+  .app { padding: 0 8px 28px; }
+  .topbar { top: 6px; margin: 6px 0 12px; padding: 10px 12px; gap: 10px; }
+  .brand { min-width: 0; }
+  .brand-mark { width: 34px; height: 34px; }
+  .brand-copy strong { font-size: 11px; }
+  .brand-copy span { font-size: 8px; }
+  .navbtn { padding: 8px 9px; font-size: 9px; }
+  .engine-pill { display: none; }
+  .toggle { padding: 7px 9px; font-size: 9px; }
+  .btn { padding: 9px 10px; font-size: 9px; }
+  .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat { padding: 12px; }
+  .stat-value { font-size: 24px; }
+  .panel { padding: 12px; }
+  .panel-head { flex-wrap: wrap; }
+  .risk-number { font-size: 38px; }
+  .tick { height: 28px; font-size: 7px; }
+  .timeline { gap: 2px; }
+  .ledger-amounts { flex-direction: column; gap: 6px; }
+  .ledger-amounts em { text-align: left; }
+  .photo-pair, .form-row { grid-template-columns: 1fr; }
+  .filter-chip { padding: 5px 7px; font-size: 9px; }
+  .role-tabs { gap: 4px; }
+  .lab-hero, .human-hero, .impact-hero { padding: 20px; }
+  .lab-dossier { padding: 16px; }
+  .human-photo { max-height: 150px; }
+  .score-compare { gap: 8px; padding: 10px; }
+  .score-compare strong { font-size: 22px; }
+  .global-footnote { font-size: 7px; padding: 4px 8px; }
+}
+@media (max-width: 380px) {
+  .stats { grid-template-columns: 1fr; }
+  .brand-copy span { display: none; }
+}
