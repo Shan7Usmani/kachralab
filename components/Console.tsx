@@ -99,6 +99,8 @@ export default function Console({ view = 'console' }: { view?: View }) {
   const [busy, setBusy] = useState(false);
   const [demoRunning, setDemoRunning] = useState(false);
   const [briefingOpen, setBriefingOpen] = useState(false);
+  const [registerOpen, setRegisterOpen] = useState(false);
+  const demoStartedRef = useRef(false);
 
   const stateRef = useRef(state);
   useEffect(() => {
@@ -352,6 +354,16 @@ export default function Console({ view = 'console' }: { view?: View }) {
     setLng('');
   }
 
+  useEffect(() => {
+    if (view !== 'console' || typeof window === 'undefined' || demoStartedRef.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('demo') === '1') {
+      demoStartedRef.current = true;
+      window.history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => { void guidedDemo(); }, 350);
+    }
+  }, [view]);
+
   const escrowTone = selected.contract.escrow === 'RELEASED'
     ? 'released'
     : selected.contract.escrow === 'WITHHELD'
@@ -364,7 +376,7 @@ export default function Console({ view = 'console' }: { view?: View }) {
       : `${formatINR(selected.contract.heldAmount)} HELD`;
 
   return (
-    <div className={`app view-${view}`}>
+    <div className={`app view-${view} ${registerOpen ? 'register-open' : ''}`}>
       <header className="topbar glass">
         <div className="brand">
           <span className="brand-mark">KL</span>
@@ -376,15 +388,10 @@ export default function Console({ view = 'console' }: { view?: View }) {
 
         <nav className="topnav" aria-label="Main actions">
           <Link href="/" className={`navbtn ${view === 'console' ? 'active' : ''}`}>CONSOLE</Link>
-          <Link href="/cases" className={`navbtn ${view === 'cases' ? 'active' : ''}`}>CASES</Link>
-          <Link href="/map" className={`navbtn ${view === 'map' ? 'active' : ''}`}>MAP</Link>
-          <Link href="/simulator" className={`navbtn ${view === 'simulator' ? 'active' : ''}`}>SIMULATOR</Link>
-          <Link href="/vision" className={`navbtn ${view === 'vision' ? 'active' : ''}`}>VISION</Link>
-          <Link href="/lab" className="navbtn">LAB</Link>
-          <Link href="/human" className="navbtn">HUMAN</Link>
+          <Link href="/human" className="navbtn">FIELD</Link>
+          <Link href="/lab" className="navbtn">PROOF</Link>
           <Link href="/impact" className="navbtn">IMPACT</Link>
-          <button className="navbtn" onClick={() => setBriefingOpen(true)}>WHY</button>
-          <button className="navbtn" onClick={resetAll}>RESET</button>
+          <Link href="/?demo=1" className="navbtn">RUN DEMO</Link>
         </nav>
 
         <div className="top-actions">
@@ -400,9 +407,7 @@ export default function Console({ view = 'console' }: { view?: View }) {
             <span className="knob" />
             {state.rain ? 'MONSOON · 1.35×' : 'DRY · 1.00×'}
           </button>
-          <button className="btn neu" onClick={guidedDemo} disabled={demoRunning || busy}>
-            {demoRunning ? 'RUNNING...' : 'SHOW THE SYSTEM WORK'}
-          </button>
+          <button className="btn neu" onClick={resetAll}>RESET</button>
         </div>
       </header>
 
@@ -481,7 +486,9 @@ export default function Console({ view = 'console' }: { view?: View }) {
         <section className="panel glass map-panel">
           <div className="panel-head">
             <h2>REAL DELHI / HOTSPOT MAP</h2>
-            <small>OPENSTREETMAP · TRUE 30 M / 150 M RADII</small>
+            <button className="filter-chip" onClick={() => setRegisterOpen((open) => !open)}>
+              {registerOpen ? 'HIDE REGISTER' : 'OPEN REGISTER'}
+            </button>
           </div>
           <div className="map-wrap">
             <RealMap
@@ -706,9 +713,6 @@ export default function Console({ view = 'console' }: { view?: View }) {
                 <p>All data is illustrative. Edge-Vision is rule-based simulation. The map is schematic, not GIS.</p>
               </article>
             </div>
-            <button className="btn neu primary" onClick={() => { setBriefingOpen(false); void guidedDemo(); }}>
-              SHOW THE SYSTEM WORK
-            </button>
           </div>
         </div>
       )}

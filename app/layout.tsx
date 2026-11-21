@@ -11,7 +11,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <div className="global-footnote">
+          Illustrative data · rule-based vision · simulated escrow · production stack on roadmap
+        </div>
+      </body>
     </html>
   );
 }

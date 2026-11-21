@@ -287,12 +287,10 @@ export default function HumanLoop() {
         </div>
         <nav className="topnav" aria-label="Main actions">
           <Link href="/" className="navbtn">CONSOLE</Link>
-          <Link href="/map" className="navbtn">MAP</Link>
-          <Link href="/simulator" className="navbtn">SIMULATOR</Link>
-          <Link href="/vision" className="navbtn">VISION</Link>
-          <Link href="/lab" className="navbtn">LAB</Link>
-          <Link href="/human" className="navbtn active">HUMAN</Link>
+          <Link href="/human" className="navbtn active">FIELD</Link>
+          <Link href="/lab" className="navbtn">PROOF</Link>
           <Link href="/impact" className="navbtn">IMPACT</Link>
+          <Link href="/?demo=1" className="navbtn">RUN DEMO</Link>
         </nav>
       </header>
 

@@ -574,3 +574,37 @@ body { font-size: 16px; }
 @media (max-width: 980px) {
   .human-grid { grid-template-columns: 1fr; }
 }
+
+/* Simplification pass */
+body { padding-bottom: 34px; }
+.global-footnote {
+  position: fixed;
+  left: 50%; bottom: 8px;
+  transform: translateX(-50%);
+  z-index: 60;
+  max-width: calc(100vw - 20px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  background: rgba(11,18,24,.88);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: var(--mute);
+  font: 9px ui-monospace, Consolas, monospace;
+  letter-spacing: .06em;
+  backdrop-filter: blur(8px);
+}
+.view-console .workspace { grid-template-columns: minmax(420px, 1fr) 340px; }
+.view-console .workspace > .panel:first-child { display: none; }
+.view-console.register-open .workspace { grid-template-columns: 270px minmax(420px, 1fr) 340px; }
+.view-console.register-open .workspace > .panel:first-child { display: block; }
+.lab-groups { margin-bottom: 12px; }
+.lab-grid.show-model .lab-card:not(:nth-child(1)):not(:nth-child(5)),
+.lab-grid.show-evidence .lab-card:not(:nth-child(2)):not(:nth-child(3)),
+.lab-grid.show-business .lab-card:not(:nth-child(4)):not(:nth-child(6)) { display: none; }
+
+@media (max-width: 640px) {
+  .global-footnote { font-size: 8px; }
+}

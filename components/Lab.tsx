@@ -124,6 +124,7 @@ export default function Lab() {
   const [drop, setDrop] = useState(68);
   const [role, setRole] = useState<RoleKey>('inspector');
   const [intakeSent, setIntakeSent] = useState(false);
+  const [group, setGroup] = useState<'model' | 'evidence' | 'business'>('model');
 
   useEffect(() => {
     const pair = syntheticPair(true);
@@ -250,13 +251,10 @@ export default function Lab() {
         </div>
         <nav className="topnav" aria-label="Main actions">
           <Link href="/" className="navbtn">CONSOLE</Link>
-          <Link href="/cases" className="navbtn">CASES</Link>
-          <Link href="/map" className="navbtn">MAP</Link>
-          <Link href="/simulator" className="navbtn">SIMULATOR</Link>
-          <Link href="/vision" className="navbtn">VISION</Link>
-          <Link href="/lab" className="navbtn active">LAB</Link>
-          <Link href="/human" className="navbtn">HUMAN</Link>
+          <Link href="/human" className="navbtn">FIELD</Link>
+          <Link href="/lab" className="navbtn active">PROOF</Link>
           <Link href="/impact" className="navbtn">IMPACT</Link>
+          <Link href="/?demo=1" className="navbtn">RUN DEMO</Link>
         </nav>
       </header>
 
@@ -275,7 +273,14 @@ export default function Lab() {
         </div>
       </section>
 
-      <div className="lab-grid">
+      <div className="role-tabs lab-groups">
+        {(['model', 'evidence', 'business'] as const).map((g) => (
+          <button key={g} className={`filter-chip ${group === g ? 'active' : ''}`} onClick={() => setGroup(g)}>
+            {g.toUpperCase()}
+          </button>
+        ))}
+      </div>
+      <div className={`lab-grid show-${group}`}>
         <section className="panel glass lab-card">
           <div className="panel-head"><h2>INTERVENTION WHAT-IF LAB</h2><small>GZ-042</small></div>
           <p className="lab-note">Move an operational lever. Watch risk and the 60% hold react.</p>
