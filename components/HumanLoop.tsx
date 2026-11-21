@@ -82,6 +82,7 @@ export default function HumanLoop() {
   const [day, setDay] = useState(7);
   const [photo, setPhoto] = useState<string | null>(null);
   const [message, setMessage] = useState('Choose a role and log an action.');
+  const [geoStatus, setGeoStatus] = useState('GPS NOT REQUESTED');
 
   useEffect(() => {
     setState(loadState());
@@ -108,6 +109,31 @@ export default function HumanLoop() {
     const reader = new FileReader();
     reader.onload = () => setPhoto(String(reader.result));
     reader.readAsDataURL(file);
+  }
+
+  function fetchLiveLocation() {
+    if (!navigator.geolocation) {
+      setGeoStatus('GPS UNSUPPORTED');
+      setMessage('This browser does not expose geolocation.');
+      return;
+    }
+    setGeoStatus('REQUESTING GPS...');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLat = position.coords.latitude;
+        const currentLng = position.coords.longitude;
+        const accuracy = Math.round(position.coords.accuracy);
+        setLat(currentLat.toFixed(6));
+        setLng(currentLng.toFixed(6));
+        setGeoStatus(`GPS LOCK ±${accuracy} M`);
+        setMessage(`Live location captured: ${currentLat.toFixed(6)}, ${currentLng.toFixed(6)} (±${accuracy} m).`);
+      },
+      (error) => {
+        setGeoStatus('GPS DENIED / UNAVAILABLE');
+        setMessage(`Location unavailable: ${error.message}`);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   }
 
   function applyDetection(kind: 'RECURRENCE' | 'SPILLOVER', next: AppState): AppState {
@@ -308,7 +334,11 @@ export default function HumanLoop() {
                   <input value={lng} onChange={(e) => setLng(e.target.value)} inputMode="decimal" />
                 </div>
               </div>
+              <div className="vision-meta" style={{ color: geoStatus.startsWith('GPS LOCK') ? 'var(--teal)' : 'var(--amber)' }}>
+                {geoStatus}
+              </div>
               <div className="btn-row">
+                <button className="btn neu primary" onClick={fetchLiveLocation}>USE MY LIVE LOCATION</button>
                 <button className="btn neu" onClick={() => { setLat('28.5702'); setLng('77.2432'); }}>
                   USE GZ-042 CENTROID PIN
                 </button>
