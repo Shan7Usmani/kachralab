@@ -766,4 +766,77 @@ textarea.input { height: auto; min-height: 76px; padding: 8px 10px; resize: vert
   .chips { width: 100%; justify-content: flex-start; }
   .split > .card:first-child .map-shell { height: 360px; min-height: 360px; }
   .split > .card:first-child .card-body.flush .map-shell { height: 360px; min-height: 360px; }
+
+  /* Public pages mobile */
+  .public-main { padding: 20px 14px 36px; }
+  .public-hero { margin-bottom: 20px; }
+  .public-hero h1 { font-size: 22px; line-height: 1.25; }
+  .public-hero p { font-size: 13px; }
+  .public-header { min-height: 56px; padding: 8px 14px; }
+  .public-nav { gap: 10px; font-size: 12px; }
+  .public-foot { padding: 14px 14px; font-size: 11px; }
+
+  /* Form improvements */
+  .card { border-radius: 10px; }
+  .card-body { padding: 14px; }
+  .card-head { padding: 12px 14px; }
+  .form-grid { gap: 12px; }
+  .field { gap: 4px; }
+  .field > label { font-size: 11.5px; }
+  .input { height: 40px; font-size: 16px; padding: 0 12px; } /* 16px prevents zoom on iOS */
+  textarea.input { min-height: 90px; padding: 10px 12px; }
+  .choice-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .choice { padding: 12px 10px; font-size: 12px; min-height: 44px; display: flex; align-items: center; }
+  .between { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .hint { order: 1; }
+  .error { order: 0; }
+  .form-actions { flex-direction: column; gap: 10px; }
+  .form-actions .btn { width: 100%; }
+  .form-actions .small { width: 100%; text-align: center; }
+  .success-panel { padding: 28px 16px; }
+  .success-panel h1 { font-size: 20px; }
+  .ref-code { font-size: 20px; letter-spacing: 0.03em; }
+  .public-hero { padding-top: 4px; }
+  .public-hero .eyebrow { font-size: 10.5px; }
+  .btn { height: 44px; font-size: 14px; }
+  .btn-sm { height: 36px; font-size: 13px; }
+  .btn svg { width: 16px; height: 16px; }
+  .switch { font-size: 13px; }
+  .switch-track { width: 36px; height: 20px; }
+  .switch-track::after { width: 16px; height: 16px; }
+  .switch[aria-pressed="true"] .switch-track::after { transform: translateX(16px); }
+  .callout { padding: 12px 14px; font-size: 12.5px; }
+  .card-foot { padding: 10px 14px; font-size: 11.5px; }
+  .legend { gap: 10px; font-size: 11px; }
+  .legend i { width: 7px; height: 7px; }
+  .days { gap: 4px; }
+  .day { font-size: 9px; }
+  .risk-cell { font-size: 13px; }
+  .split-bar { height: 8px; }
+  .ledger-row { font-size: 12px; padding: 6px 0; }
+  .diag { gap: 10px; }
+  .diag li { padding-left: 10px; }
+  .diag strong { font-size: 12px; }
+  .diag span { font-size: 11.5px; }
+  .meter { margin-bottom: 10px; }
+  .meter-head { font-size: 11.5px; }
+  .bar { height: 5px; }
+  .stat { padding: 14px; }
+  .stat-label { font-size: 10.5px; }
+  .stat-value { font-size: 22px; }
+  .page-head { margin-bottom: 18px; }
+  .page-head h1 { font-size: 20px; }
+  .page-sub { font-size: 12.5px; }
+  .head-actions { width: 100%; justify-content: flex-start; }
+  .head-actions .btn { flex: 1; }
+  .toolbar .search { width: 100%; }
+  .chips { gap: 6px; }
+  .chip { padding: 6px 10px; font-size: 12px; }
+  .empty { padding: 24px 14px; }
+  .empty h3 { font-size: 13px; }
+  .empty p { font-size: 12px; }
+
+  /* Map specific */
+  .real-map { height: 360px !important; }
+  .card-body.flush .real-map { height: 360px !important; }
 }
