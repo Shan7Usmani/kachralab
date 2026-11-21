@@ -2,6 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   serverExternalPackages: ['pg'],
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'geolocation=(self)'
+          }
+        ]
+      }
+    ];
+  },
   async redirects() {
     return [
       { source: '/cases', destination: '/hotspots', permanent: false },
