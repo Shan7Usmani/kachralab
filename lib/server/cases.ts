@@ -476,11 +476,7 @@ function mapCitizenStatus(status: CaseStatus): CitizenStatus {
 }
 
 async function syncCitizenStatus(item: CaseRow): Promise<void> {
-  try {
-    await updateCaseStatus(item.id, mapCitizenStatus(item.status));
-  } catch (error) {
-    console.error('citizen status sync failed', error);
-  }
+  await updateCaseStatus(item.id, mapCitizenStatus(item.status));
 }
 
 function defaultNote(action: CaseAction, item: CaseRow, team: string): string {
