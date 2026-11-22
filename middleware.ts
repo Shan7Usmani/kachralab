@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const STAFF_PASSWORD = process.env.STAFF_PASSWORD;
-const COOKIE_NAME = 'kachralab_staff_auth';
+const STAFF_PASSWORD = process.env.STAFF_PASSWORD || (process.env.NODE_ENV === 'development' ? 'nagarseva2026' : '');
+const COOKIE_NAME = 'nagarseva_staff_auth';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,8 +20,14 @@ export function middleware(request: NextRequest) {
   }
 
   // Allow access in development if no password is configured
-  if (!STAFF_PASSWORD && process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
+  if (!process.env.STAFF_PASSWORD && process.env.NODE_ENV === 'development') {
+    const authCookie = request.cookies.get(COOKIE_NAME);
+    if (authCookie?.value === 'nagarseva2026') {
+      return NextResponse.next();
+    }
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
   }
 
   const authCookie = request.cookies.get(COOKIE_NAME);

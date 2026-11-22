@@ -4,7 +4,7 @@ import { Suspense, useState, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge, Card } from '@/components/ui';
 
-const STAFF_PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || (process.env.NODE_ENV === 'development' ? '' : 'nagarseva2026');
+const STAFF_PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || 'nagarseva2026';
 
 function LoginForm() {
   const router = useRouter();
@@ -18,12 +18,12 @@ function LoginForm() {
     event.preventDefault();
     setError('');
 
-    // In development without a configured password, allow any password or empty
-    if (!STAFF_PASSWORD && process.env.NODE_ENV === 'development') {
+    // In development without a configured password, use the default password
+    if (!process.env.NEXT_PUBLIC_STAFF_PASSWORD && process.env.NODE_ENV === 'development') {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: 'dev' })
+        body: JSON.stringify({ password: 'nagarseva2026' })
       });
 
       if (response.ok) {
@@ -89,7 +89,7 @@ function LoginForm() {
         <div className="callout mt-16" style={{ fontSize: 13 }}>
           {process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_STAFF_PASSWORD ? (
             <>
-              <strong>Development mode:</strong> No staff password configured. Enter any password or leave empty to sign in.
+              <strong>Development mode:</strong> Using default password <code>nagarseva2026</code>.
               <br />
               For production, configure <code>STAFF_PASSWORD</code> and <code>NEXT_PUBLIC_STAFF_PASSWORD</code> environment variables.
             </>
