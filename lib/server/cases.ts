@@ -686,6 +686,7 @@ export async function syncCaseFromReport(report: CitizenReportRow): Promise<void
       escrowState: reopened ? 'WITHHELD' : existing.escrowState,
       escrowReleasedAt: reopened ? null : existing.escrowReleasedAt,
       description: report.description,
+      reference: report.reference,
       updatedAt: new Date().toISOString()
     };
     const saved = await writeCase(updated);

@@ -48,7 +48,7 @@ export async function createReport(input: NewReportInput): Promise<CitizenReport
 
   const cluster = clusterReport({ lat: input.lat, lng: input.lng }, candidates, 30);
   const caseId = cluster.matchedId ?? `CZ-${code(4)}`;
-  const reference = `KL-${new Date().getFullYear()}-${code(6)}`;
+  const reference = `NS-${new Date().getFullYear()}-${code(6)}`;
 
   const row: CitizenReportRow = {
     reference,
@@ -67,12 +67,7 @@ export async function createReport(input: NewReportInput): Promise<CitizenReport
 
   await insertRow(row);
 
-  try {
-    await syncCaseFromReport(row);
-  } catch (error) {
-    // The complaint is already saved; a case-register failure must not lose it.
-    console.error('case register sync failed', error);
-  }
+  await syncCaseFromReport(row);
 
   return row;
 }
