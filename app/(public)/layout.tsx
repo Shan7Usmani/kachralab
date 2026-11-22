@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: 'KachraLab | Report a waste problem',
+  title: 'NagarSeva | Report a waste problem',
   description: 'Report a municipal waste problem in Delhi NCR and track what happens next.'
 };
 
@@ -14,7 +14,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
         <Link href="/" className="brand" style={{ padding: 0 }}>
           <span className="brand-mark">KL</span>
           <span>
-            <span className="brand-name">KachraLab</span>
+            <span className="brand-name">NagarSeva</span>
             <span className="brand-sub">Municipal waste reporting</span>
           </span>
         </Link>

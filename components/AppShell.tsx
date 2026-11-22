@@ -50,7 +50,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const title = TITLES[pathname] ?? 'Overview';
-    document.title = `${title} | KachraLab`;
+    document.title = `${title} | NagarSeva`;
   }, [pathname]);
 
   const reset = () => {
@@ -71,7 +71,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <Link href="/" className="brand">
           <span className="brand-mark">KL</span>
           <span>
-            <span className="brand-name">KachraLab</span>
+            <span className="brand-name">NagarSeva</span>
             <span className="brand-sub">Waste intervention intelligence</span>
           </span>
         </Link>

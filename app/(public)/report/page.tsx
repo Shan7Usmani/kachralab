@@ -29,7 +29,7 @@ export default function ReportPage() {
   const [result, setResult] = useState<SubmitResult | null>(null);
 
   useEffect(() => {
-    document.title = 'Report waste | KachraLab';
+    document.title = 'Report waste | NagarSeva';
   }, []);
 
   const locate = () => {

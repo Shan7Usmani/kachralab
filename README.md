@@ -1,10 +1,10 @@
-# KachraLab
+# NagarSeva
 
 Municipal waste intervention console for the CodeSprint 2026 demo. The app clusters citizen reports
 into persistent hotspots, scores risk, and holds 60% of a clearance contract until a site passes a
 14-day verification window.
 
-Live demo: <https://kachralab.vercel.app>
+Live demo: <https://nagarseva.vercel.app>
 
 All coordinates, report counts, classification output and contract amounts are illustrative seed data.
 

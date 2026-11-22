@@ -4,7 +4,7 @@ import { Suspense, useState, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge, Card } from '@/components/ui';
 
-const STAFF_PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || (process.env.NODE_ENV === 'development' ? '' : 'kachralab2026');
+const STAFF_PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || (process.env.NODE_ENV === 'development' ? '' : 'nagarseva2026');
 
 function LoginForm() {
   const router = useRouter();
@@ -59,7 +59,7 @@ function LoginForm() {
         <Card className="auth-card">
           <div className="text-center mb-24">
             <div className="mb-12"><Badge tone="info">Staff Access</Badge></div>
-            <h1>Sign in to KachraLab</h1>
+            <h1>Sign in to NagarSeva</h1>
             <p className="small muted mt-8">Enter the staff password to access the municipal dashboard.</p>
           </div>
 
@@ -95,7 +95,7 @@ function LoginForm() {
             </>
           ) : (
             <>
-              <strong>Demo credentials:</strong> The password is <code>kachralab2026</code>. In production, configure
+              <strong>Demo credentials:</strong> The password is <code>nagarseva2026</code>. In production, configure
               <code>STAFF_PASSWORD</code> and <code>NEXT_PUBLIC_STAFF_PASSWORD</code> environment variables.
             </>
           )}
