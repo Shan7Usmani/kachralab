@@ -4,7 +4,7 @@ import { Suspense, useState, FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Badge, Card } from '@/components/ui';
 
-const STAFF_PASSWORD = process.env.NEXT_PUBLIC_STAFF_PASSWORD || 'nagarseva2026';
+const STAFF_PASSWORD = 'nagarseva2026';
 
 function LoginForm() {
   const router = useRouter();
@@ -18,38 +18,17 @@ function LoginForm() {
     event.preventDefault();
     setError('');
 
-    // In development without a configured password, use the default password
-    if (!process.env.NEXT_PUBLIC_STAFF_PASSWORD && process.env.NODE_ENV === 'development') {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: 'nagarseva2026' })
-      });
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
 
-      if (response.ok) {
-        router.push(redirect);
-        router.refresh();
-      } else {
-        setError('Authentication failed. Please try again.');
-      }
-      return;
-    }
-
-    if (password === STAFF_PASSWORD) {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-
-      if (response.ok) {
-        router.push(redirect);
-        router.refresh();
-      } else {
-        setError('Authentication failed. Please try again.');
-      }
+    if (response.ok) {
+      router.push(redirect);
+      router.refresh();
     } else {
-      setError('Invalid password. Please check with your administrator.');
+      setError('Invalid password. Please try again.');
     }
   };
 
@@ -87,18 +66,7 @@ function LoginForm() {
         </form>
 
         <div className="callout mt-16" style={{ fontSize: 13 }}>
-          {process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_STAFF_PASSWORD ? (
-            <>
-              <strong>Development mode:</strong> Using default password <code>nagarseva2026</code>.
-              <br />
-              For production, configure <code>STAFF_PASSWORD</code> and <code>NEXT_PUBLIC_STAFF_PASSWORD</code> environment variables.
-            </>
-          ) : (
-            <>
-              <strong>Demo credentials:</strong> The password is <code>nagarseva2026</code>. In production, configure
-              <code>STAFF_PASSWORD</code> and <code>NEXT_PUBLIC_STAFF_PASSWORD</code> environment variables.
-            </>
-          )}
+          <strong>Demo password:</strong> <code>nagarseva2026</code>
         </div>
       </Card>
       </div>
