@@ -27,6 +27,7 @@ export interface CaseRow {
   priority: CasePriority;
   status: CaseStatus;
   team: string | null;
+  assignedTo: string | null;
   dueAt: string | null;
   createdAt: string;
   updatedAt: string;

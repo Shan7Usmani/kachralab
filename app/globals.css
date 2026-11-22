@@ -1309,6 +1309,44 @@ textarea.input { height: auto; min-height: 76px; padding: 8px 10px; resize: vert
 
 .footer-bottom .small { font-size: 11px; margin-top: 4px; display: block; }
 
+/* ---------- NGO Dashboard ---------- */
+
+.ngo-dashboard { display: flex; flex-direction: column; gap: 20px; }
+
+.case-list-ngo { display: flex; flex-direction: column; }
+.case-list-ngo .case-row {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.case-list-ngo .case-row:last-child { border-bottom: 0; }
+.case-list-ngo .case-row:hover { background: var(--surface-2); }
+.case-list-ngo .case-row.selected { background: var(--accent-soft); }
+
+.verification-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+.verification-dot.pending { background: var(--border-strong); }
+.verification-dot.in-progress { background: var(--warn); }
+.verification-dot.verified { background: var(--ok); }
+.verification-dot.failed { background: var(--danger); }
+
+.volunteer-row { transition: background 0.15s; }
+.volunteer-row:hover { background: var(--surface) !important; }
+
+.panel-cases, .panel-file, .panel-volunteers, .panel-report, .panel-empty {
+  height: 100%;
+  min-height: 500px;
+}
+
+@media (max-width: 1080px) {
+  .panel-cases, .panel-file, .panel-volunteers, .panel-report, .panel-empty {
+    min-height: auto;
+  }
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1080px) {

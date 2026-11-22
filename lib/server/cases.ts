@@ -57,6 +57,7 @@ interface CaseDbRow {
   priority: string;
   status: string;
   team: string | null;
+  assigned_to: string | null;
   due_at: Date | string | null;
   created_at: Date | string;
   updated_at: Date | string;
@@ -137,6 +138,7 @@ function mapCase(row: CaseDbRow): CaseRow {
     priority: isCasePriority(row.priority) ? row.priority : 'P3',
     status: isCaseStatus(row.status) ? row.status : 'RECEIVED',
     team: row.team,
+    assignedTo: row.assigned_to,
     dueAt: toIso(row.due_at),
     createdAt: toIso(row.created_at) ?? new Date().toISOString(),
     updatedAt: toIso(row.updated_at) ?? new Date().toISOString(),
@@ -197,6 +199,7 @@ function seedToCase(hotspot: Hotspot): CaseRow {
         : status === 'RECURRING'
           ? TEAMS[3]
           : null;
+  const assignedTo = status === 'ASSIGNED' || status === 'IN_PROGRESS' || status === 'CLEARED' ? 'Safai Saathi Foundation' : null;
   const closed = status === 'CLOSED' || status === 'VERIFIED';
 
   return {
@@ -211,6 +214,7 @@ function seedToCase(hotspot: Hotspot): CaseRow {
     priority,
     status,
     team,
+    assignedTo,
     dueAt: closed ? null : addHours(new Date(), SLA_HOURS[priority]),
     createdAt,
     updatedAt: createdAt,
@@ -239,6 +243,7 @@ const CASE_COLUMNS = [
   'priority',
   'status',
   'team',
+  'assigned_to',
   'due_at',
   'created_at',
   'updated_at',
@@ -267,6 +272,7 @@ function caseValues(item: CaseRow): unknown[] {
     item.priority,
     item.status,
     item.team,
+    item.assignedTo,
     item.dueAt,
     item.createdAt,
     item.updatedAt,
@@ -312,10 +318,10 @@ async function writeCase(item: CaseRow): Promise<CaseRow> {
 
   const rows = await query<CaseDbRow>(
     `UPDATE cases SET
-       status = $2, priority = $3, team = $4, due_at = $5, cleared_at = $6,
-       verification_day = $7, spillover = $8, escrow_held = $9, escrow_state = $10,
-       escrow_released_at = $11, reports_count = $12, factors = $13, description = $14,
-       updated_at = $15
+       status = $2, priority = $3, team = $4, assigned_to = $5, due_at = $6, cleared_at = $7,
+       verification_day = $8, spillover = $9, escrow_held = $10, escrow_state = $11,
+       escrow_released_at = $12, reports_count = $13, factors = $14, description = $15,
+       updated_at = $16
      WHERE id = $1
      RETURNING *`,
     [
@@ -323,6 +329,7 @@ async function writeCase(item: CaseRow): Promise<CaseRow> {
       item.status,
       item.priority,
       item.team,
+      item.assignedTo,
       item.dueAt,
       item.clearedAt,
       item.verificationDay,
@@ -722,6 +729,7 @@ export async function syncCaseFromReport(report: CitizenReportRow): Promise<void
     priority,
     status: 'RECEIVED',
     team: null,
+    assignedTo: null,
     dueAt: addHours(new Date(), SLA_HOURS[priority]),
     createdAt: now,
     updatedAt: now,
